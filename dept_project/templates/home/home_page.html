@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+    {% image banner_image width-1500 as img %}
+
+    <div class="jumbotron" style="background-image: url('{{img.url}}'); background-size:cover">
+        <h1 class="display-4">{{banner_title}}</h1>
+        <div class="lead">{{banner_subtitle | richtext}}</div>
+        {% if self.banner_cta %}
+        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+        {% endif %}
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <form action="\" method="post">
+                    {% csrf_token %}
+                    <label for="search_book">Search Book: </label>
+                    <input id="search_book" type="text" name="search_book" value="{{ current_name }}">
+                    <input type="hidden" name="form_type" value="sform">
+                    <input type="submit" class="btn btn-primary" value="submit">
+                </form>
+            </div>
+            <div class="col-sm">
+                <form action="\" method="post">
+                    {% csrf_token %}
+                    <label for="select_author">Filter By Author: </label>
+                        <select name="author_id" id="author_id" style="width: 200px;height: 30px;">
+                            {% for aidk, aname in author_name.items %}
+                                <option value="{{aidk}}">{{aname}}</option>
+                            {% endfor %}
+                        </select>
+                    <input type="hidden" name="form_type" value="aform">
+                    <input type="submit" class="btn btn-primary" value="submit">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        {% for brows in book_rows %}
+        <div class="card">
+            <div class="card-header m5">{{ brows.name }}</div>
+            <div class="card-body">
+              <div class="card-title">Author:
+
+                {% for mbk, mbd in mapbookauthor_data.items %}
+                    {% if brows.id == mbk %}
+                        {% for aid in mbd %}
+                            {% for ak, ad in author_name.items %}
+                                {% if aid == ak %}
+                                <span class="m3">{{ad}}</span>    
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+              </div>
+              <p class="card-text">{{ brows.description }}</p>
+              
+            </div>
+        </div>
+        <hr/>
+        {% endfor %}
+    </div>
+
+{% endblock %}
